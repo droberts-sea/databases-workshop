@@ -19,7 +19,7 @@ CREATE TABLE raw_transactions (
   sender_id CHAR(36) NOT NULL,
 
   -- Note that units are clearly labeled
-  amount_cents_usd INT NOT NULL,
+  amount_usd INT NOT NULL,
 
   -- 3-character ISO country code
   receive_country CHAR(3) NOT NULL,
@@ -53,12 +53,12 @@ VALUES
 
 CREATE TABLE risk_thresholds (
   -- Auto-incrementing ID
-  -- Note BIGSERIAL instead of SERIAL - 4 billion unique records is less than you think
-  -- (this caused an outage at Remitly once)
+  -- Note BIGSERIAL instead of SERIAL. SERIAL would probably be fine for this application,
+  -- but 4 billion unique records is less than you think (this caused an outage at Remitly once)
   id BIGSERIAL NOT NULL PRIMARY KEY,
 
   risk_level INT NOT NULL,
-  volume_threshold INT NOT NULL,
+  volume_threshold_usd INT NOT NULL,
   created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
 
   CONSTRAINT fk_risk_level FOREIGN KEY (risk_level) REFERENCES risk_levels (id)
