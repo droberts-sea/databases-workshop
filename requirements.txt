@@ -1,0 +1,4 @@
+psycopg2==2.9.1
+sqlparse==0.4.2
+tabulate==0.8.9
+yoyo-migrations==7.3.2

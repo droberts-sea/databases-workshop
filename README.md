@@ -10,6 +10,8 @@ Prerequisites
 - Docker / docker-compose v2
 - Git
 
+Steps:
+
 1. Clone this repo
 
     ```
@@ -17,18 +19,30 @@ Prerequisites
     $ cd databases-workshop
     ```
 
-2. Run the database via docker-compose
+1. Run the database via docker-compose
 
     ```
     $ docker-compose up
     ```
 
-    This will eat the tab - keep it running in the background forever
+    This will eat the terminal tab - keep it running in the background forever
 
-3. Spin up a virtual environment and install Python dependencies
+    If you want to connect to the DB directly, you can do so with:
+
+    ```
+    $ PGPASSWORD=password psql -h localhost -p 5432 -U postgres -d star-engine
+    ```
+
+1. (In a new terminal tab) Spin up a virtual environment and install Python dependencies
 
     ```
     $ python3 -m venv venv
     $ source venv/bin/activate
     $ pip install requirements.txt
+    ```
+
+1. Apply database migrations via [yoyo migrations](https://ollycope.com/software/yoyo/latest/)
+
+    ```
+    $ yoyo apply --batch
     ```
