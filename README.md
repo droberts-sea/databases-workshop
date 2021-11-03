@@ -46,3 +46,9 @@ Steps:
     ```
     $ yoyo apply --batch
     ```
+
+1. Populate DB with test data
+
+    ```
+    $ python src/populate_db.py
+    ```

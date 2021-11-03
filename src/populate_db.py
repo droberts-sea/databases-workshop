@@ -1,15 +1,11 @@
 from datetime import datetime, timedelta
 from db.db import connect
 from dotenv import load_dotenv
-import json
-import os
 import random
 import uuid
 
 load_dotenv('.env.shared')
 load_dotenv()
-
-print(os.getenv('DB_NAME'))
 
 random.seed("a consistent but unpredictable source of noise")
 
@@ -42,8 +38,6 @@ def populate_risk_tables(cursor):
     cursor.execute('INSERT INTO risk_thresholds (risk_level, volume_threshold_usd) VALUES (%s, %s);', (level, RISK_THRESHOLDS[level]))
 
 RECIPIENT_COUNT_DISTRIBUTION = [1] * 10 + [2] * 15 + [3] * 8 + [4] * 3 + list(range(5, 31))
-
-print('Recipient count dist', RECIPIENT_COUNT_DISTRIBUTION)
 
 def create_sender():
   recipients = []
@@ -81,20 +75,26 @@ def populate_transactions(cursor, transactions):
     cursor.execute('INSERT INTO raw_transactions (id, sender_id, recipient_id, amount_usd, receive_country, complete_timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (txn['id'], txn['sender_id'], txn['recipient_id'], txn['amount_usd'], txn['receive_country'], txn['complete_timestamp']))
 
 if __name__ == '__main__':
+  start_time = datetime.now()
   conn = connect()
 
-  # cursor = conn.cursor()
-  # populate_risk_tables(cursor)
-  # conn.commit()
+  cursor = conn.cursor()
+  populate_risk_tables(cursor)
+  conn.commit()
 
   cursor = conn.cursor()
   cursor.execute('DELETE FROM raw_transactions;')
 
-  for i in range(100):
+  sender_count = 100
+  txn_count = 0
+  for i in range(sender_count):
     snd = create_sender()
     txns = create_transactions(snd)
     populate_transactions(cursor, txns)
+    txn_count += len(txns)
+  
   conn.commit()
 
-  # for i in range(5):
-  #   print(json.dumps(create_sender()))
+  end_time = datetime.now()
+  duration = end_time - start_time
+  print(f'Created {txn_count} transactions for {sender_count} senders in {duration.total_seconds()} seconds')
