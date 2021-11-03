@@ -1,0 +1,11 @@
+services:
+  db:
+    image: "postgres:alpine"
+    container_name: star-engine-db
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: star-engine
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5432:5432

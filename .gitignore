@@ -2,6 +2,9 @@
 # Borrowed with love from:
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 
+# Local Postgres database
+postgresql
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
