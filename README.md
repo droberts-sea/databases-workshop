@@ -52,3 +52,18 @@ Steps:
     ```
     $ python src/populate_db.py
     ```
+
+## Legal
+
+This workshop was developed by Dan Roberts in November 2021.
+
+It is based on a modified version of a project I worked on while employed at Remitly. While some of the algorithms and approaches demonstrated here may be partially inspired by the design we implemented at Remitly, I have been extremely careful about keeping this project separate from Remitly's IP:
+
+- I did not access code owned by Remitly while working on this project
+- I did the work on equipment owned by me
+- I did not use any of Remitly's data, systems, software, or other digital assets while working on this project
+- An examination of the codebases, tables, queries, etc of the two projects will show them to be extremely different
+
+The code in this repository is governed by the MIT license (see [LICENSE](./LICENSE)).
+
+The [accompanying slide deck](https://docs.google.com/presentation/d/1pYIafgco8wUiHcvu7AhHHaOo8Q1GdbmpRPG641uyhJ0) is [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
