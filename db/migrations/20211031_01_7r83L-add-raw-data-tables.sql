@@ -39,17 +39,11 @@ CREATE TRIGGER set_raw_transactions_update_time BEFORE UPDATE
 ON raw_transactions FOR EACH ROW EXECUTE PROCEDURE 
 set_update_timestamp();
 
--- We use table risk_levels as an enum
-CREATE TABLE risk_levels (
-  id INT PRIMARY KEY,
-  risk VARCHAR(30) NOT NULL UNIQUE
-);
-
-INSERT INTO risk_levels (id, risk)
-VALUES
-  (1, 'LOW'),
-  (2, 'MEDIUM'),
-  (3, 'HIGH');
+-- postgres lets you define a custom enum type
+-- mysql doesn't support this, enums can only be defined in-line in a table definintion
+-- you can either copy/pase the enum everywhere it's needed, or create a table to
+-- represent it and use foreign-key constraints to enforce correctness
+CREATE TYPE risk AS ENUM ('low', 'medium', 'high');
 
 CREATE TABLE risk_thresholds (
   -- Auto-incrementing ID
@@ -57,19 +51,26 @@ CREATE TABLE risk_thresholds (
   -- but 4 billion unique records is less than you think (this caused an outage at Remitly once)
   id BIGSERIAL NOT NULL PRIMARY KEY,
 
-  risk_level INT NOT NULL,
+  risk_level risk NOT NULL,
   volume_threshold_usd INT NOT NULL,
-  created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
-
-  CONSTRAINT fk_risk_level FOREIGN KEY (risk_level) REFERENCES risk_levels (id)
+  created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL
 );
 
 CREATE TABLE country_risks (
   id BIGSERIAL NOT NULL PRIMARY KEY,
 
   country CHAR(3) NOT NULL,
-  risk_level INT NOT NULL,
-  created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
-
-  CONSTRAINT fk_risk_level FOREIGN KEY (risk_level) REFERENCES risk_levels (id)
+  risk_level risk NOT NULL,
+  created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL
 );
+
+CREATE TABLE participant_trust_levels (
+  id CHAR(36) NOT NULL PRIMARY KEY,
+  trust_level INT NOT NULL DEFAULT 1,
+  created TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+  updated TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL
+);
+
+CREATE TRIGGER set_participant_trust_levels_update_time BEFORE UPDATE
+ON participant_trust_levels FOR EACH ROW EXECUTE PROCEDURE 
+set_update_timestamp();

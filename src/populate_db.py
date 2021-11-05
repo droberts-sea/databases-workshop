@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime, timedelta
 from db.db import connect
 from dotenv import load_dotenv
@@ -11,20 +12,20 @@ random.seed("a consistent but unpredictable source of noise")
 
 # Make up some fake ISO alpha-3 codes
 COUNTRY_RISKS = {
-  'AAA': 1,
-  'BBB': 1,
-  'CCC': 2,
-  'DDD': 2,
-  'EEE': 2,
-  'FFF': 2,
-  'GGG': 3,
-  'HHH': 3,
+  'AAA': 'low',
+  'BBB': 'low',
+  'CCC': 'medium',
+  'DDD': 'medium',
+  'EEE': 'medium',
+  'FFF': 'medium',
+  'GGG': 'high',
+  'HHH': 'high',
 }
 
 RISK_THRESHOLDS = {
-  1: 45_000,
-  2: 30_000,
-  3: 10_000,
+  'low': 45_000,
+  'medium': 30_000,
+  'high': 10_000,
 }
 
 def populate_risk_tables(cursor):
@@ -51,6 +52,7 @@ def create_sender():
     'age_days': random.randint(65, 1000),
     'send_cadence_days': random.randint(6, 60),
     'recipients': recipients,
+    'trust_level': random.choice([None] + list(range(2, 6)))
   }
 
 def create_transactions(sender):
@@ -70,25 +72,31 @@ def create_transactions(sender):
 
   return txns
 
+def populate_sender_trust_level(cursor, sender_id, level):
+  if level != None:
+    cursor.execute('INSERT INTO participant_trust_levels (id, trust_level) VALUES (%s, %s)', (sender_id, level))
+
 def populate_transactions(cursor, transactions):
   for txn in transactions:
     cursor.execute('INSERT INTO raw_transactions (id, sender_id, recipient_id, amount_usd, receive_country, complete_timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (txn['id'], txn['sender_id'], txn['recipient_id'], txn['amount_usd'], txn['receive_country'], txn['complete_timestamp']))
 
-if __name__ == '__main__':
+def main(args):
   start_time = datetime.now()
   conn = connect()
 
   cursor = conn.cursor()
+
+  print(f'Populating risk tables...')
   populate_risk_tables(cursor)
-  conn.commit()
 
-  cursor = conn.cursor()
-  cursor.execute('DELETE FROM raw_transactions;')
+  sender_count = args.senders
+  print(f'Populating database with txns for {sender_count} senders...')
 
-  sender_count = 100
   txn_count = 0
   for i in range(sender_count):
     snd = create_sender()
+    populate_sender_trust_level(cursor, snd['id'], snd['trust_level'])
+
     txns = create_transactions(snd)
     populate_transactions(cursor, txns)
     txn_count += len(txns)
@@ -98,3 +106,12 @@ if __name__ == '__main__':
   end_time = datetime.now()
   duration = end_time - start_time
   print(f'Created {txn_count} transactions for {sender_count} senders in {duration.total_seconds()} seconds')
+
+def get_cli_args():
+  parser = argparse.ArgumentParser(description='Populate database with test data.')
+  parser.add_argument('--senders', type=int, default=20, help='number of senders to generate')
+  return parser.parse_args()
+
+if __name__ == '__main__':
+  args = get_cli_args()
+  main(args)
