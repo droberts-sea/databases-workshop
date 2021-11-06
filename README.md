@@ -1,7 +1,3 @@
-# Hello! I got locked out of the zoom room. We're reconveening in this one:
-
-https://us04web.zoom.us/j/4238210371?pwd=MHRiVzRVK2E0b2N5anMzdkVLMGhlUT09
-
 # Databases 102
 
 Tips, Tricks and Theory for the Working Professional
@@ -42,8 +38,16 @@ Steps:
     ```
     $ python3 -m venv venv
     $ source venv/bin/activate
-    $ pip install -r requirements.txt
+    $ python3 -m pip install -r requirements.txt
     ```
+
+    You may need to install the postgres client, if so then pip will complain about missing `pg_client`. To do so:
+
+    ```
+    $ brew install postgresql
+    ```
+
+    Then re-run the `pip install` line.
 
 1. Apply database migrations via [yoyo migrations](https://ollycope.com/software/yoyo/latest/)
 
@@ -54,7 +58,7 @@ Steps:
 1. Populate DB with test data
 
     ```
-    $ python src/populate_db.py
+    $ python3 src/populate_db.py
     ```
 
 ## Legal
