@@ -1,3 +1,7 @@
+# Hello! I got locked out of the zoom room. We're reconveening in this one:
+
+https://us04web.zoom.us/j/4238210371?pwd=MHRiVzRVK2E0b2N5anMzdkVLMGhlUT09
+
 # Databases 102
 
 Tips, Tricks and Theory for the Working Professional
