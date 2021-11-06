@@ -38,7 +38,7 @@ Steps:
     ```
     $ python3 -m venv venv
     $ source venv/bin/activate
-    $ pip install requirements.txt
+    $ pip install -r requirements.txt
     ```
 
 1. Apply database migrations via [yoyo migrations](https://ollycope.com/software/yoyo/latest/)
